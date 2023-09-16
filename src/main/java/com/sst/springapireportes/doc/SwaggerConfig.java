@@ -1,60 +1,83 @@
-package com.sstproyects.springboot.backend.apirest.doc;
+package com.sst.springapireportes.doc;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
 
 @Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                contact = @Contact(
+                        name = "Shalom Solution Tech",
+                        email = "shalomsolutiontech@gmail.com",
+                        url = "https://github.com/rolycore"
+                ),
+                description = "OpenApi documentation for Spring Security",
+                title = "OpenApi specification - Shalom Solution Tech",
+                version = "1.0",
+                license = @License(
+                        name = "Licence name",
+                        url = "https://some-url.com"
+                ),
+                termsOfService = "Terms of service"
+        ),
+
+        servers = {
+                @Server(
+                        description = "Local ENV",
+                        url = "http://localhost:8080"
+                ),
+                @Server(
+                        description = "PROD ENV",
+                        url = "http://localhost:8080"
+                )
+        },
+        security = {
+                @SecurityRequirement(
+                        name = "bearerAuth"
+                )
+        }
+)
+@io.swagger.v3.oas.annotations.security.SecurityScheme(
+        name = "bearerAuth",
+        description = "JWT auth description",
+        scheme = "bearer",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+)
 public class SwaggerConfig implements WebMvcConfigurer {
 
-  @Bean
-  public Docket api(){
-    return new Docket(DocumentationType.SWAGGER_2)
-      .apiInfo(apiInfo())
-      .securityContexts(Arrays.asList(securityContext()))
-      .securitySchemes(Arrays.asList(apiKey()))
-      .select()
-      .apis(RequestHandlerSelectors.any())
-      .paths(PathSelectors.any())
-      .build();
-  }
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
 
-  private ApiKey apiKey(){
-    return new ApiKey("JWT", "Authorization", "header");
-  }
+                .components(new Components()
+                        .addSecuritySchemes("bearer-key",
+                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))
+                       );
 
-  private SecurityContext securityContext(){
-    return SecurityContext.builder().securityReferences(defaultAuth()).build();
-  }
+    }
 
-  private List<SecurityReference> defaultAuth(){
-    AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-    AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-    authorizationScopes[0] = authorizationScope;
-    return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
-  }
+    @Bean
+    public void message(){
+        System.out.println("bearer is working");
+    }
 
-  private ApiInfo apiInfo(){
-    return new ApiInfo(
-
-       "OpenAPI specification - Shalom Solution Tech",
-      "Descripción",
-      "1.0",
-      "Términos y Condiciones",
-      new Contact("Shalom Solution Tech", "https://github.com/rolycore", "shalomsolutiontech@gmail.com"),
-      "Licencia",
-      "www.licencia.com",
-      Collections.emptyList()
-    );
-  }
 }

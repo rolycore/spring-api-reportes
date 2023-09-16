@@ -1,6 +1,7 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas;
+package com.sst.springapireportes.modelo.services;
 
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.EquipoCliente;
+
+import com.sst.springapireportes.modelo.entidad.EquipoCliente;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas;
+package com.sst.springapireportes.modelo.services;
 
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.EquipoCliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.ReporteTecnico;
+
+import com.sst.springapireportes.modelo.entidad.ReporteTecnico;
 import net.sf.jasperreports.engine.JRException;
 
 import java.io.FileNotFoundException;
@@ -12,6 +12,8 @@ public interface IReporteTecnicoService {
   ReporteTecnico save(ReporteTecnico reporteTecnico);
   void deleteById(Long id);
 
-  byte[] exportReport(String reportFormat) throws FileNotFoundException, JRException;
+ // byte[] exportReport(String reportFormat) throws FileNotFoundException, JRException;
   ReporteTecnico createOrUpdate(ReporteTecnico reporteTecnico);
+  byte[] exportPdf(ReporteTecnico reporteTecnico) throws JRException, FileNotFoundException;
+  //byte[] exportXls() throws JRException, FileNotFoundException;
 }

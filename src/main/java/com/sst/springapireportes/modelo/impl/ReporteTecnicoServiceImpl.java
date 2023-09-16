@@ -1,13 +1,14 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.service;
+package com.sst.springapireportes.modelo.impl;
 
-import com.sstproyects.springboot.backend.apirest.excepciones.ReportNotFoundException;
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IReporteTecnicoDao;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.EquipoCliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.ReporteTecnico;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IReporteTecnicoService;
+import com.sst.springapireportes.excepciones.ReportNotFoundException;
+import com.sst.springapireportes.modelo.entidad.Cliente;
+import com.sst.springapireportes.modelo.entidad.EquipoCliente;
+import com.sst.springapireportes.modelo.entidad.ReporteTecnico;
+import com.sst.springapireportes.modelo.repository.IReporteTecnicoDao;
+import com.sst.springapireportes.modelo.services.IReporteTecnicoService;
 
-import com.sstproyects.springboot.backend.apirest.utileria.commons.JasperReportManager;
+
+import com.sst.springapireportes.util.ReporteTecnicoReportGenerator;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,11 @@ import java.util.Optional;
 
 @Service
 public class ReporteTecnicoServiceImpl implements IReporteTecnicoService {
-  @Autowired
-  private JasperReportManager reportManager;
+
   @Autowired
   private IReporteTecnicoDao iReporteTecnicoDao;
+  @Autowired
+  private ReporteTecnicoReportGenerator reporteTecnicoReportGenerator;
 
   @Override
   @Transactional(readOnly = true)
@@ -55,7 +57,7 @@ public class ReporteTecnicoServiceImpl implements IReporteTecnicoService {
     iReporteTecnicoDao.deleteById(id);
   }
 
-  public byte[] exportReport(String reportFormat) throws JRException, FileNotFoundException {
+ /*public byte[] exportReport(String reportFormat) throws JRException, FileNotFoundException {
 
    ReporteTecnico reporteTecnico = new ReporteTecnico();
 
@@ -145,7 +147,7 @@ public class ReporteTecnicoServiceImpl implements IReporteTecnicoService {
       System.out.println("No se encontró el reporte técnico con ID " + reporteTecnico.getIdreptec());
       throw new ReportNotFoundException("No se encontró el reporte técnico con ID " + reporteTecnico.getIdreptec());
     }
-  }
+  }*/
 
   @Override
   public ReporteTecnico createOrUpdate(ReporteTecnico reporteTecnico) {
@@ -217,5 +219,12 @@ public class ReporteTecnicoServiceImpl implements IReporteTecnicoService {
     // Si el reporte no tiene un ID válido o no existe, crea uno nuevo
     return iReporteTecnicoDao.save(reporteTecnico);
   }
+
+  @Override
+  public byte[] exportPdf(ReporteTecnico reporteTecnico) throws JRException, FileNotFoundException {
+    return reporteTecnicoReportGenerator.exportToPdf(reporteTecnico);
   }
+
+
+}
 

@@ -1,12 +1,16 @@
-package com.sstproyects.springboot.backend.apirest.controllers.serviciocliente;
+package com.sst.springapireportes.controllers;
 
-import com.sstproyects.springboot.backend.apirest.excepciones.ReportNotFoundException;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.EquipoCliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.ReporteTecnico;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IClienteService;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IEquipoClienteService;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IReporteTecnicoService;
+import com.sst.springapireportes.excepciones.ReportNotFoundException;
+import com.sst.springapireportes.modelo.entidad.Cliente;
+
+import com.sst.springapireportes.modelo.entidad.EquipoCliente;
+import com.sst.springapireportes.modelo.entidad.ReporteTecnico;
+
+import com.sst.springapireportes.modelo.services.IClienteService;
+import com.sst.springapireportes.modelo.services.IEquipoClienteService;
+import com.sst.springapireportes.modelo.services.IReporteTecnicoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.dao.DataAccessException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,6 +33,8 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api/v1/")
+@Tag(name = "ReporteTecnico",description = "Registro de los reportes Tecnicos")
+@SecurityRequirement(name = "bearer-key")
 public class ReporteTecnicoController {
 
   @Autowired
@@ -97,124 +103,24 @@ public class ReporteTecnicoController {
     iReporteTecnicoService.deleteById(id);
     return ResponseEntity.ok(null);
   }
-
-  @GetMapping("/reporte-tecnico/{id}/{format}")
-  public ResponseEntity<byte[]> generateReport(
-    @PathVariable Long id, @PathVariable String format,
-    @ModelAttribute ReporteTecnico reporteTecnico) {
-    try {
-      // Validar el formato proporcionado
-      if (!isValidFormat(format)) {
-        return ResponseEntity.badRequest().body("Formato no válido".getBytes());
-      }
-
-      reporteTecnico = iReporteTecnicoService.findById(id);
-      if (id == null) {
-        return ResponseEntity.badRequest().body("El ID no puede ser nulo ".getBytes());
-      }
-      if (reporteTecnico != null) {
-        Optional<Cliente> clienteOptional = Optional.ofNullable(clienteService.findById(reporteTecnico.getCliente().getIdCliente()));
-        if (!clienteOptional.isPresent()) {
-          return ResponseEntity.notFound().build();
-        }
-        reporteTecnico.setCliente(clienteOptional.get());
-
-        Optional<EquipoCliente> equipoClienteOptional = Optional.ofNullable(equipoClienteService.findById(reporteTecnico.getEquipo().getIdEquipo()));
-        if (!equipoClienteOptional.isPresent()) {
-          return ResponseEntity.notFound().build();
-        }
-        reporteTecnico.setEquipo(equipoClienteOptional.get());
-
-        // Generar el informe aquí con el formato especificado
-        byte[] reportBytes = iReporteTecnicoService.exportReport(format);
-
-        // Puedes guardar el informe en la base de datos aquí si es necesario
-
-        // Devuelve el informe o lo que sea adecuado en tu caso
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(getContentType(format)); // Define el tipo de contenido según el formato
-        headers.add("Content-Disposition", "inline; filename=reporte." + format);
-
-        return ResponseEntity.ok()
-          .headers(headers)
-          .body(reportBytes);
-      } else {
-        return ResponseEntity.badRequest()
-          .body("No se encontró el ID del reporte".getBytes());
-      }
-    } catch (IOException e) {
-      // Manejo de errores en caso de que la conversión falle.
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Error al generar el informe. ".getBytes());
-    } catch (JRException e) {
-      // Manejo de la situación en la que no se encontró el reporte
-      ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("No se encontró el reporte técnico con ID " + reporteTecnico.getIdreptec());
-      throw new ReportNotFoundException("No se encontró el reporte técnico con ID " + reporteTecnico.getIdreptec());
-    }
-  }
-
-
-
-
-  // Método para validar el formato
-  private boolean isValidFormat(String format) {
-    // Aquí puedes agregar lógica para validar formatos permitidos, por ejemplo, "pdf", "csv", etc.
-    // Devuelve true si el formato es válido, de lo contrario, false.
-    return format != null && (format.equalsIgnoreCase("pdf") || format.equalsIgnoreCase("csv"));
-  }
-
-  // Método para obtener el tipo de contenido según el formato
-  private MediaType getContentType(String format) {
-    // Define el tipo de contenido según el formato
-    if (format.equalsIgnoreCase("pdf")) {
-      return MediaType.APPLICATION_PDF;
-    } else {
-      // Agrega más tipos de contenido si es necesario
-      return MediaType.APPLICATION_OCTET_STREAM; // Tipo de contenido por defecto
-    }
-
-  }
-  /*@GetMapping("/reporte-tecnico/formato/{format}")
-  public Object generateReport(@PathVariable String format, @ModelAttribute ReporteTecnico reporteTecnico) throws FileNotFoundException, JRException {
-    try {
-      Optional<Cliente> clienteOptional = Optional.ofNullable(clienteService.findById(reporteTecnico.getCliente().getIdCliente()));
-      if (!clienteOptional.isPresent()) {
-        return ResponseEntity.unprocessableEntity().build();
-      }
-      reporteTecnico.setCliente(clienteOptional.get());
-      Optional<EquipoCliente> equipoClienteOptional = Optional.ofNullable(equipoClienteService.findById(reporteTecnico.getEquipo().getIdEquipo()));
-      if (!clienteOptional.isPresent()) {
-        return ResponseEntity.unprocessableEntity().build();
-      }
-      reporteTecnico.setEquipo(equipoClienteOptional.get());
-      ReporteTecnico generatedReport = iReporteTecnicoService.exportReport(String.valueOf(reporteTecnico));
-      return ResponseEntity.status(HttpStatus.CREATED).body(generatedReport);
-
-    }catch (IOException e) {
-        // Manejo de errores en caso de que la conversión falle.
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-      }
-
-  }*/
-  /*@GetMapping("/export-pdf")
-  public ResponseEntity<byte[]> exportPdf() throws JRException, FileNotFoundException {
+  @GetMapping("/export-pdf")
+  public ResponseEntity<byte[]> exportPdf(ReporteTecnico reporteTecnico) throws JRException, FileNotFoundException {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_PDF);
-    headers.setContentDispositionFormData("petsReport", "petsReport.pdf");
-    return ResponseEntity.ok().headers(headers).body(iReporteTecnicoService.exportPdf());
+    headers.setContentDispositionFormData("reporte_de_tecnico", "reportetecnico.pdf");
+    return ResponseEntity.ok().headers(headers).body(iReporteTecnicoService.exportPdf(reporteTecnico));
   }
 
-  @GetMapping("/export-xls")
+  /*@GetMapping("/export-xls")
   public ResponseEntity<byte[]> exportXls() throws JRException, FileNotFoundException {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
     var contentDisposition = ContentDisposition.builder("attachment")
-      .filename("petsReport" + ".xls").build();
+            .filename("reportetecnico" + ".xls").build();
     headers.setContentDisposition(contentDisposition);
     return ResponseEntity.ok()
-      .headers(headers)
-      .body(iReporteTecnicoService.exportXls());
+            .headers(headers)
+            .body(iReporteTecnicoService.exportXls());
   }*/
 }
 

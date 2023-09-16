@@ -1,15 +1,17 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.service;
+package com.sst.springapireportes.modelo.impl;
 
 import java.util.List;
 
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IClienteService;
+
+import com.sst.springapireportes.modelo.entidad.Cliente;
+import com.sst.springapireportes.modelo.repository.IClienteDao;
+import com.sst.springapireportes.modelo.services.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IClienteDao;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
+
 
 @Service
 public class ClienteServiceImpl implements IClienteService {
@@ -20,7 +22,7 @@ public class ClienteServiceImpl implements IClienteService {
 	@Transactional(readOnly = true)
 	public List<Cliente> findAll(Pageable pageable) {
 
-      return (List<Cliente>) clienteDao.findAll();
+      return (List<Cliente>) clienteDao.findAll(pageable);
   }
 
   @Override

@@ -1,6 +1,7 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas;
+package com.sst.springapireportes.modelo.services;
 
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
+
+import com.sst.springapireportes.modelo.entidad.Cliente;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

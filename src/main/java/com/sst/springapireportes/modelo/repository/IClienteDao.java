@@ -1,9 +1,10 @@
-package com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente;
+package com.sst.springapireportes.modelo.repository;
 
+import com.sst.springapireportes.modelo.entidad.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
+
 
 import java.util.List;
 import java.util.Optional;

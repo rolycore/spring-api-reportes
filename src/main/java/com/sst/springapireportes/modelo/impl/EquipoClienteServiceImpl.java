@@ -1,7 +1,8 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.service;
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IEquipoClienteDao;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.EquipoCliente;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IEquipoClienteService;
+package com.sst.springapireportes.modelo.impl;
+
+import com.sst.springapireportes.modelo.entidad.EquipoCliente;
+import com.sst.springapireportes.modelo.repository.IEquipoClienteDao;
+import com.sst.springapireportes.modelo.services.IEquipoClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

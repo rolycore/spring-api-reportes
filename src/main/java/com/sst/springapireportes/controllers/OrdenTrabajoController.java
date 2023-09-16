@@ -1,10 +1,11 @@
-package com.sstproyects.springboot.backend.apirest.controllers.serviciocliente;
+package com.sst.springapireportes.controllers;
 
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IOrdenTrabajoDao;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.OrdenTrabajo;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Precio;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IOrdenTrabajoService;
+
+import com.sst.springapireportes.modelo.entidad.OrdenTrabajo;
+import com.sst.springapireportes.modelo.repository.IOrdenTrabajoDao;
+import com.sst.springapireportes.modelo.services.IOrdenTrabajoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ import java.util.Optional;
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api/v1/")
+@Tag(name = "OrdenesTrabajo",description = "Registro de ordenes de Trabajos")
+@SecurityRequirement(name = "bearer-key")
 public class OrdenTrabajoController {
   private final IOrdenTrabajoDao iOrdenTrabajoDao;
 
@@ -53,7 +56,7 @@ public class OrdenTrabajoController {
   //Creando Ordenes de Trabajos
   @PostMapping("/ordenes-trabajos")
   public ResponseEntity<OrdenTrabajo> create(@Valid @RequestBody OrdenTrabajo ordenTrabajo, BindingResult result) throws IOException {
-    Optional<OrdenTrabajo>ordenTrabajoOptional= Optional.ofNullable(iOrdenTrabajoService.findById(ordenTrabajo.getCliente().getIdCliente()));
+    Optional<OrdenTrabajo>ordenTrabajoOptional= iOrdenTrabajoService.findById(ordenTrabajo.getCliente().getIdCliente());
     if(!ordenTrabajoOptional.isPresent()){
       return ResponseEntity.unprocessableEntity().build();
     }
@@ -64,12 +67,13 @@ public class OrdenTrabajoController {
 
   // Actualizar Orden Trabajo por ID
   @PutMapping("/ordenes-trabajos/{id}")
-  public ResponseEntity<OrdenTrabajo> update(@Valid @RequestBody OrdenTrabajo ordenTrabajo, BindingResult result) throws IOException {
-    Optional<OrdenTrabajo>ordenTrabajoOptional= Optional.ofNullable(iOrdenTrabajoService.findById(ordenTrabajo.getCliente().getIdCliente()));
+  public ResponseEntity<OrdenTrabajo> update(@PathVariable Long id,  @ModelAttribute OrdenTrabajo ordenTrabajo, BindingResult result) throws IOException {
+    // Verifica si la OrdenTrabajo existe primero
+    Optional<OrdenTrabajo> ordenTrabajoOptional = iOrdenTrabajoService.findById(id);
     if(!ordenTrabajoOptional.isPresent()){
       return ResponseEntity.unprocessableEntity().build();
     }
-    ordenTrabajo.setCliente(ordenTrabajoOptional.get().getCliente());
+    ordenTrabajo.setCliente(ordenTrabajo.getCliente());
     OrdenTrabajo createdOrdenTrabajo =  iOrdenTrabajoService.createOrUpdate(ordenTrabajo);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdOrdenTrabajo);
   }

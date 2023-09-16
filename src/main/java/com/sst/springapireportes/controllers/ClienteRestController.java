@@ -1,4 +1,4 @@
-package com.sstproyects.springboot.backend.apirest.controllers.serviciocliente;
+package com.sst.springapireportes.controllers;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -9,10 +9,13 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import ch.qos.logback.core.net.server.Client;
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IClienteDao;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IClienteService;
+import com.sst.springapireportes.modelo.entidad.Cliente;
+import com.sst.springapireportes.modelo.repository.IClienteDao;
+import com.sst.springapireportes.modelo.services.IClienteService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -32,13 +35,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
+
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api/v1/")
-@Tag(name = "Clientes")
+@Tag(name = "Clientes",description = "Registro de los clientes")
+@SecurityRequirement(name = "bearer-key")
+@SuppressWarnings("all")
 public class ClienteRestController {  @Autowired
 private IClienteDao iClienteDao;
   @Autowired
@@ -61,8 +66,8 @@ private IClienteDao iClienteDao;
   )
   // Buscar todos clientes
   @GetMapping("/clientes")
-  public List<Cliente> index() {
-    return iClienteDao.findAll();
+  public List<Cliente> todosClientes(Pageable pageable) {
+    return clienteService.findAll(pageable);
 
   }
 

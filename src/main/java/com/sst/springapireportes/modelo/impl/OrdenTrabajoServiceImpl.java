@@ -1,20 +1,26 @@
-package com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.service;
+package com.sst.springapireportes.modelo.impl;
 
-import com.sstproyects.springboot.backend.apirest.models.dao.serviciocliente.IOrdenTrabajoDao;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.Cliente;
-import com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente.OrdenTrabajo;
-import com.sstproyects.springboot.backend.apirest.models.services.serviciocliente.interzas.IOrdenTrabajoService;
+
+import com.sst.springapireportes.modelo.entidad.OrdenTrabajo;
+import com.sst.springapireportes.modelo.repository.IOrdenTrabajoDao;
+import com.sst.springapireportes.modelo.services.IOrdenTrabajoService;
+import com.sst.springapireportes.util.OrdenTrabajoReportGenerator;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrdenTrabajoServiceImpl implements IOrdenTrabajoService {
   @Autowired
   private IOrdenTrabajoDao ordenTrabajoDao;
+  @Autowired
+  private OrdenTrabajoReportGenerator ordenTrabajoReportGenerator;
   @Override
   public List<OrdenTrabajo> findAll(Pageable pageable) {
     return (List<OrdenTrabajo>) ordenTrabajoDao.findAll();
@@ -22,8 +28,9 @@ public class OrdenTrabajoServiceImpl implements IOrdenTrabajoService {
 
   @Override
   @Transactional (readOnly = true)
-  public OrdenTrabajo findById(Long idOT) {
-    return ordenTrabajoDao.findById(idOT).orElse(null);
+  public Optional<OrdenTrabajo> findById(Long idOT) {
+
+    return ordenTrabajoDao.findById(idOT);
   }
 
   @Override
@@ -58,4 +65,18 @@ public class OrdenTrabajoServiceImpl implements IOrdenTrabajoService {
     // Guarda el cliente actualizado en la base de datos
     return ordenTrabajoDao.save(ordenTrabajo);
   }
+
+  @Override
+  public byte[] exportOtPdf(OrdenTrabajo ordenTrabajo) throws JRException, FileNotFoundException {
+    // Llama al método exportToPdf con el ID de la OrdenTrabajo
+    return ordenTrabajoReportGenerator.exportToPdf(ordenTrabajo.getIdOT());
+  }
+
+
+ /* @Override
+  public byte[] exportXls(List<OrdenTrabajo> ordenTrabajo) throws JRException, FileNotFoundException {
+    return ordenTrabajoReportGenerator.exportToXls(ordenTrabajo);
+  }*/
+
+
 }

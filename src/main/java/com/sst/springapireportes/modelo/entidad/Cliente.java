@@ -1,4 +1,4 @@
-package com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente;
+package com.sst.springapireportes.modelo.entidad;
 
 import java.io.Serializable;
 import java.util.*;
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import com.sstproyects.springboot.backend.apirest.auditoria.modelo.Auditable;
+import com.sst.springapireportes.auditoria.modelo.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
@@ -104,12 +104,7 @@ public class Cliente extends Auditable implements Serializable{
   // Relación con Equipos
   @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
   private Set<EquipoCliente> equipos = new HashSet<>();
-  @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-  private Set<SolicitudCabe> solicitudes = new HashSet<>();
-  @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-  private Set<CotizacionCabe> cotizaciones = new HashSet<>();
-  @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-  private Set<Calibracion> calibraciones = new HashSet<>();
+
   @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
   private Set<OrdenTrabajo> ordenTrabajos = new HashSet<>();
   @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)

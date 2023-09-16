@@ -1,4 +1,4 @@
-package com.sstproyects.springboot.backend.apirest.models.entity.serviciocliente;
+package com.sst.springapireportes.modelo.entidad;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.*;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sstproyects.springboot.backend.apirest.auditoria.modelo.Auditable;
+import com.sst.springapireportes.auditoria.modelo.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
