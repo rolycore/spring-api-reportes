@@ -1,0 +1,34 @@
+<div class="container py-5">
+  <div class="card bg-dark text-white"> 
+    <h2 class="card-header">{{titulo}}</h2>
+    <div class="card-body">
+      <form class="mx-auto" style="max-width: 25rem;"(ngSubmit)="authenticate()">
+    
+        <div class="mb-3">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email"class="form-control" required [(ngModel)]="authRequest.email">
+          <div class="alert alert-danger"
+          *ngIf="formulario.get(user.email)?.invalid && formulario.get(user.email)?.touched">
+          Email es requerido!
+        </div>
+        </div>
+        <div class="mb-3">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control"required [(ngModel)]="authRequest.password">
+          <div class="alert alert-danger"
+          *ngIf="formulario.get(user.password)?.invalid && formulario.get(user.password)?.touched">
+          Password es requerido!
+        </div>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Login</button>
+          <a class="btn btn-secondary"routerLink="/register">Register</a>
+        </div>
+    
+    
+      </form>
+
+    </div>
+  </div>
+ 
+</div>

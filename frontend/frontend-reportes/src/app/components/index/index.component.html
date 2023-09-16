@@ -1,9 +1,0 @@
-<div class="container text-center">
-  <div *ngIf="isLogged">
-    <h2>Bienvenido {{ nombreUsuario }}</h2>
-    <p>{{ welcomeMessage }}</p> <!-- Muestra el mensaje de bienvenida desde el backend -->
-  </div>
-  <ng-template #loggedOut>
-    <h2>No has iniciado sesión</h2>
-  </ng-template>
-</div>
